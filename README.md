@@ -47,7 +47,7 @@ Models trained on days 1–30, tested on days 31–60 (which contain a scam play
 * Ayush Kumar
 * Bharat Saini
 * Bhupendra Sahu
-* Nishit
+* Nishit Nagar
 
 ## Honest limits
 
