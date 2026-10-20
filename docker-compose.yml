@@ -1,0 +1,18 @@
+services:
+  vyuh:
+    build: .
+    ports:
+      # Host port defaults to 8000. If 8000 is already used by another program,
+      # set VYUH_PORT in .env (for example VYUH_PORT=8001) and open that port.
+      - "${VYUH_PORT:-8000}:8000"
+    env_file:
+      - .env
+    volumes:
+      - vyuh-data:/app/data
+      - vyuh-models:/app/models/saved
+      - vyuh-reports:/app/reports
+    restart: unless-stopped
+volumes:
+  vyuh-data:
+  vyuh-models:
+  vyuh-reports:

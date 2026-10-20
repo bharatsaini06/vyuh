@@ -1,0 +1,21 @@
+# Part-time job / "prepaid task" scam.
+# Basis: MHA/I4C public advisories and caller-tune campaigns on fake job and
+# investment scams (MHA Rajya Sabha reply, 3 Dec 2025); I4C advisory, 3 Nov 2024.
+name: task_scam
+title: Part-time job / task scam
+known: true
+warning: >-
+  Jobs that pay you a small reward first and then ask you to pay to "unlock"
+  bigger earnings are scams. Do not pay. Talk to your bank or call 1930.
+warning_hi: >-
+  जो नौकरी पहले थोड़ा इनाम देती है और फिर बड़ी कमाई 'अनलॉक' करने के लिए पैसे मांगती है, वह धोखा है। पैसे न भेजें। अपने बैंक से बात करें या 1930 पर कॉल करें।
+targets: {student: 0.45, gig: 0.30, salaried: 0.25}
+campaigns: {per_month: 2, victims: [14, 30], arrival_hours: [1.5, 6]}
+steps:
+  - {kind: trust_credit, count: [1, 3], amount: [100, 300], gap_hours: [0.1, 2]}
+  - {kind: ladder, steps: [3, 6], start: [800, 2000], ratio: [1.8, 3.0], gap_hours: [0.3, 14],
+     refund_prob: 0.6, refund_steps: 2, refund_multiplier: 1.3}
+  - {kind: fee_to_withdraw, prob: 0.4, amount_ratio: [0.3, 0.8], gap_hours: [3, 24]}
+signals: {call_active: 0.10, screen_share: 0.0, remote_app: 0.0, paste_payee: 0.85, session_sec: [60, 300], collect: 0.0}
+remarks: {prob: 0.5, words: [task, vip, unlock, fee]}
+cash_out: {collectors: 6, rotate_every: 3, forward_minutes: [2, 40], dormant_share: 0.25}

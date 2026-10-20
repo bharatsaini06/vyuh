@@ -1,0 +1,21 @@
+# Instant-loan app: a small loan is credited, then "recovery agents" threaten the
+# victim (morphed photos, calls to contacts) and demand repeated payments to new
+# UPI IDs - a different ID almost every time.
+# Basis: I4C / MHA advisories on illegal digital lending apps; RBI press releases
+# cautioning against unauthorised lending apps.
+name: loan_app_extortion
+title: Illegal loan-app recovery threats
+known: true
+warning: >-
+  Recovery agents who threaten you or your contacts and ask you to pay new UPI IDs
+  are criminals. Do not pay. Report the app on 1930 or cybercrime.gov.in.
+warning_hi: >-
+  जो 'रिकवरी एजेंट' आपको या आपके जानने वालों को धमकाते हैं और नए UPI ID पर पैसे मांगते हैं, वे अपराधी हैं। पैसे न दें। ऐप की शिकायत 1930 या cybercrime.gov.in पर करें।
+targets: {student: 0.40, gig: 0.35, salaried: 0.25}
+campaigns: {per_month: 2, victims: [10, 22], arrival_hours: [2, 8]}
+steps:
+  - {kind: trust_credit, count: [1, 1], amount: [2000, 6000], gap_hours: [1, 6]}
+  - {kind: burst, count: [3, 6], amount: [1500, 12000], gap_hours: [3, 30]}
+signals: {call_active: 0.60, screen_share: 0.0, remote_app: 0.05, paste_payee: 0.9, session_sec: [60, 300], collect: 0.0}
+remarks: {prob: 0.4, words: [recovery, penalty, loan]}
+cash_out: {collectors: 8, rotate_every: 1, forward_minutes: [2, 40], dormant_share: 0.3}

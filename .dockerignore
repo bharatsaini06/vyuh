@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+data/
+models/saved/
+reports/
+.env
+.git/
+.pytest_cache/

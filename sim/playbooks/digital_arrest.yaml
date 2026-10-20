@@ -1,0 +1,19 @@
+# "Digital arrest": fake police/CBI/customs officials on video call coerce
+# victims to transfer savings for "verification".
+# Basis: I4C advisory, 3 Nov 2024; MHA awareness programme (Rajya Sabha, 3 Dec 2025).
+name: digital_arrest
+title: Digital arrest (fake officials on video call)
+known: true
+warning: >-
+  Police, CBI, customs or RBI never arrest anyone on a video call and never ask
+  you to transfer money for "verification". End the call and call 1930.
+warning_hi: >-
+  पुलिस, CBI, कस्टम या RBI कभी वीडियो कॉल पर किसी को गिरफ़्तार नहीं करते और 'वेरिफ़िकेशन' के लिए पैसे ट्रांसफ़र करने को नहीं कहते। कॉल काटें और 1930 पर कॉल करें।
+targets: {senior: 0.50, salaried: 0.50}
+campaigns: {per_month: 2, victims: [8, 18], arrival_hours: [3, 10]}
+steps:
+  - {kind: funding, type: fd_break, prob: 0.4, fraction: [0.3, 0.7], gap_hours: [0.3, 1.5]}
+  - {kind: lump, count: [1, 3], fraction: [0.3, 0.7], gap_hours: [0.2, 3]}
+signals: {call_active: 0.95, screen_share: 0.05, remote_app: 0.0, paste_payee: 0.6, session_sec: [600, 3000], collect: 0.0}
+remarks: {prob: 0.4, words: [verification, rbi, bail, penalty]}
+cash_out: {collectors: 4, rotate_every: 2, forward_minutes: [3, 30], dormant_share: 0.3}

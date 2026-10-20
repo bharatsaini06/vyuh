@@ -1,0 +1,22 @@
+# Fake buyer / "refund agent" sends a QR code or payment link and says "scan to
+# receive your money". A Re 1-10 test credit builds trust, then each scan PAYS
+# the scammer. The QR belongs to a recently opened "merchant" mule account.
+# Replaces the old collect-request playbook: NPCI ended person-to-person UPI
+# collect requests on 1 Oct 2025; QR / link misuse continues.
+# Basis: RBI "BE(A)WARE" booklet (2022) on QR-code frauds; NPCI P2P collect circular (2025).
+name: qr_refund_scam
+title: Fake refund / "scan QR to receive money"
+known: true
+warning: >-
+  Scanning a QR code or entering your UPI PIN always SENDS money from your account.
+  You never need to scan or enter a PIN to receive a refund. Stop and check with your bank.
+warning_hi: >-
+  QR कोड स्कैन करने या UPI PIN डालने से पैसे हमेशा आपके खाते से जाते हैं। रिफ़ंड या पैसे पाने के लिए कभी स्कैन या PIN की ज़रूरत नहीं होती। रुकें और अपने बैंक से पूछें।
+targets: {student: 0.35, gig: 0.30, salaried: 0.35}
+campaigns: {per_month: 2, victims: [12, 26], arrival_hours: [1, 6]}
+steps:
+  - {kind: trust_credit, count: [1, 1], amount: [1, 10], gap_hours: [0.02, 0.2]}
+  - {kind: burst, count: [1, 3], amount: [2000, 30000], gap_hours: [0.05, 0.5]}
+signals: {call_active: 0.70, screen_share: 0.0, remote_app: 0.0, paste_payee: 0.0, session_sec: [40, 240], collect: 1.0}
+remarks: {prob: 0.3, words: [refund, verification]}
+cash_out: {collectors: 5, rotate_every: 3, forward_minutes: [2, 30], dormant_share: 0.0, collector_type: business}

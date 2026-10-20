@@ -1,0 +1,20 @@
+# EMERGING (held out): digital-arrest variant where fake officials make the
+# victim take the bank's pre-approved loan first, then transfer it.
+# Never shown to the models during training - used to test emerging detection.
+name: digital_arrest_loan
+title: Digital arrest + instant loan (emerging variant)
+known: false
+start_day: 42
+warning: >-
+  No official ever asks you to take a loan and transfer it. This is a scam.
+  End the call and call 1930.
+warning_hi: >-
+  कोई भी अधिकारी आपसे लोन लेकर उसे ट्रांसफ़र करने को नहीं कहता। यह धोखा है। कॉल काटें और 1930 पर कॉल करें।
+targets: {senior: 0.40, salaried: 0.60}
+campaigns: {per_month: 3, victims: [10, 20], arrival_hours: [2, 6]}
+steps:
+  - {kind: funding, type: loan, prob: 1.0, amount: [100000, 500000], gap_hours: [0.2, 1.0]}
+  - {kind: lump, count: [1, 2], fraction: [0.8, 1.0], gap_hours: [0.1, 1.2]}
+signals: {call_active: 0.95, screen_share: 0.10, remote_app: 0.0, paste_payee: 0.6, session_sec: [900, 3600], collect: 0.0}
+remarks: {prob: 0.3, words: [verification, rbi]}
+cash_out: {collectors: 4, rotate_every: 2, forward_minutes: [2, 20], dormant_share: 0.3}

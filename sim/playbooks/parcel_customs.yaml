@@ -1,0 +1,18 @@
+# "Your parcel is held at customs" -> escalating clearance fees.
+# Basis: I4C advisory, 3 Nov 2024 (impersonation of customs officials).
+name: parcel_customs
+title: Parcel held at customs
+known: true
+warning: >-
+  Customs never asks for clearance fees through UPI to a personal account.
+  Stop paying and verify on the official courier website.
+warning_hi: >-
+  कस्टम विभाग कभी UPI से किसी निजी खाते में क्लियरेंस फ़ीस नहीं मांगता। पैसे भेजना बंद करें और कूरियर की आधिकारिक वेबसाइट पर जांच करें।
+targets: {salaried: 0.50, senior: 0.30, gig: 0.20}
+campaigns: {per_month: 2, victims: [10, 24], arrival_hours: [2, 8]}
+steps:
+  - {kind: ladder, steps: [3, 5], start: [1500, 4000], ratio: [1.8, 3.0], gap_hours: [2, 20],
+     refund_prob: 0.0, refund_steps: 0, refund_multiplier: 1.0}
+signals: {call_active: 0.40, screen_share: 0.0, remote_app: 0.0, paste_payee: 0.8, session_sec: [60, 300], collect: 0.0}
+remarks: {prob: 0.5, words: [customs, clearance, penalty]}
+cash_out: {collectors: 5, rotate_every: 3, forward_minutes: [3, 40], dormant_share: 0.25}

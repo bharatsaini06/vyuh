@@ -1,0 +1,18 @@
+# Fake KYC/electricity-bill message -> victim installs a screen-sharing /
+# remote-access app -> account drained in quick transfers.
+# Basis: RBI "BE(A)WARE" booklet (2022) on remote-access and KYC-update frauds.
+name: kyc_remote_access
+title: Fake KYC / remote-access app
+known: true
+warning: >-
+  Never install screen-sharing or remote-control apps on someone's request. Banks
+  never ask you to update KYC through a link or app sent by message.
+warning_hi: >-
+  किसी के कहने पर स्क्रीन-शेयरिंग या रिमोट-कंट्रोल ऐप कभी इंस्टॉल न करें। बैंक कभी मैसेज में भेजे गए लिंक या ऐप से KYC अपडेट नहीं करवाते।
+targets: {senior: 0.50, salaried: 0.30, student: 0.20}
+campaigns: {per_month: 2, victims: [10, 24], arrival_hours: [1, 5]}
+steps:
+  - {kind: burst, count: [2, 5], fraction: [0.10, 0.35], gap_hours: [0.02, 0.3]}
+signals: {call_active: 0.80, screen_share: 0.60, remote_app: 0.90, paste_payee: 0.3, session_sec: [200, 900], collect: 0.0}
+remarks: {prob: 0.3, words: [kyc]}
+cash_out: {collectors: 8, rotate_every: 1, forward_minutes: [1, 15], dormant_share: 0.2}

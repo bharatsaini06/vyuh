@@ -1,0 +1,19 @@
+# WhatsApp/Telegram stock-tip groups with fake trading apps ("pig butchering").
+# Basis: I4C advisory on stock-market/investment scams, 3 Nov 2024.
+name: investment_group
+title: Fake stock-tip / investment group
+known: true
+warning: >-
+  Groups that show huge profits on an app and ask you to keep investing, or to
+  pay "tax" before withdrawal, are scams. Real brokers never work this way.
+warning_hi: >-
+  जो ग्रुप ऐप पर भारी मुनाफ़ा दिखाकर बार-बार निवेश करवाते हैं या पैसे निकालने से पहले 'टैक्स' मांगते हैं, वे धोखा हैं। असली ब्रोकर ऐसे काम नहीं करते।
+targets: {salaried: 0.60, senior: 0.20, gig: 0.20}
+campaigns: {per_month: 2, victims: [10, 22], arrival_hours: [4, 14]}
+steps:
+  - {kind: ladder, steps: [4, 7], start: [5000, 20000], ratio: [1.3, 2.2], gap_hours: [12, 60],
+     refund_prob: 0.7, refund_steps: 1, refund_multiplier: 1.2}
+  - {kind: fee_to_withdraw, prob: 0.6, amount_ratio: [0.2, 0.5], gap_hours: [12, 48]}
+signals: {call_active: 0.05, screen_share: 0.0, remote_app: 0.0, paste_payee: 0.7, session_sec: [60, 400], collect: 0.0}
+remarks: {prob: 0.5, words: [invest, ipo, tax]}
+cash_out: {collectors: 5, rotate_every: 3, forward_minutes: [5, 60], dormant_share: 0.3}
