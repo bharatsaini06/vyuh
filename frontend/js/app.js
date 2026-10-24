@@ -76,7 +76,7 @@
     ["supervisor", "Supervisor", "Everything an investigator does, plus sharing with partner banks and approving new scam types."],
     ["auditor", "Auditor", "Read-only. Sees every case and the tamper-evident audit log."],
   ];
-  const ACTION_WORDS = { case_viewed: "Opened case", case_confirm: "Confirmed case", case_reject: "Rejected case", case_monitor: "Kept under review", case_close: "Closed case", login: "Signed in", login_failed: "Failed sign-in", new_case: "New case raised", material_change: "Case changed", campaign_injected: "Launched test scam", replay_start: "Started clock", replay_pause: "Paused clock", replay_step: "Jumped ahead", replay_reset: "Reset demo", case_exported: "Exported case", adversary_toggled: "Scammers adapt switched", customer_response_simulated: "Customer answered pause", playbook_approved: "Added new scam type", runtime_started: "System started", suppression_approved: "Approved suppression", suppression_declined: "Declined suppression", suppression_revoked: "Lifted suppression", suppression_expired: "Suppression expired", mode_changed: "Changed rollout mode", customer_kill_switch: "Customer kill switch", report_1930_downloaded: "Downloaded 1930 report", password_changed: "Changed password", password_change_failed: "Wrong current password", action_callback_live_victims: "Requested call-backs", action_collector_review: "Sent accounts for review", action_draft_1930_report: "Drafted 1930 report", action_share_with_partners: "Shared with partner banks" };
+  const ACTION_WORDS = { case_viewed: "Opened case", case_confirm: "Confirmed case", case_reject: "Rejected case", case_monitor: "Kept under review", case_close: "Closed case", login: "Signed in", login_failed: "Failed sign-in", new_case: "New case raised", material_change: "Case changed", campaign_injected: "Launched test scam", replay_start: "Started clock", replay_pause: "Paused clock", replay_step: "Jumped ahead", replay_reset: "Reset demo", case_exported: "Exported case", adversary_toggled: "Scammers adapt switched", customer_response_simulated: "Customer answered pause", playbook_approved: "Added new scam type", runtime_started: "System started", suppression_approved: "Approved suppression", suppression_declined: "Declined suppression", suppression_revoked: "Lifted suppression", suppression_expired: "Suppression expired", mode_changed: "Changed rollout mode", customer_kill_switch: "Customer kill switch", report_1930_downloaded: "Downloaded 1930 report", password_changed: "Changed password", password_change_failed: "Wrong current password", action_callback_live_victims: "Requested call-backs", action_collector_review: "Sent accounts for review", action_draft_1930_report: "Drafted 1930 report", action_share_with_partners: "Shared with partner banks", lab_run: "Ran Test Lab file", lab_scenario: "Ran Test Lab scenario" };
 
   // ---------------------------------------------------------------- customer screen words (English / Hindi)
   const PH = {
@@ -101,7 +101,7 @@
   };
 
   // ---------------------------------------------------------------- top bar
-  const TABS = [["live", "Live demo"], ["cases", "Cases"], ["results", "Results"], ["safety", "Safety"]];
+  const TABS = [["live", "Live demo"], ["cases", "Cases"], ["lab", "Test Lab"], ["results", "Results"], ["safety", "Safety"]];
   function topbar(active) {
     const controls = WORK() ? `<span class="ctl">
       <button class="tb-btn play" data-act="play" id="tb-play" title="Space">Play</button>
@@ -723,6 +723,7 @@
         case "login": case "live": await viewLive(); break;
         case "cases": await viewCases(); break;
         case "case": await viewCase(decodeURIComponent(arg || "")); break;
+        case "lab": window.VyuhLab.view({ app, shell, api, toast, WORK, token: () => S.token }); break;
         case "results": await viewResults(); break;
         case "safety": await viewSafety(); break;
         default: location.hash = "#/live"; return;
