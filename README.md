@@ -36,7 +36,7 @@ With a `label` column (scam / genuine) the lab reports catch rate, false positiv
 
 Models trained on days 1–30, tested on days 31–60 (which contain a scam playbook the models never saw), against a rules engine (B0), per-payment ML (B1), per-payment ML + mule score (B2), and B1/B2 tuned to Vyuh's friction. `python -m scripts.prepare` writes the numbers from **your** run to [`docs/REFERENCE_RESULTS.md`](docs/REFERENCE_RESULTS.md); the web console shows them on the **Results** tab, including the RBI blanket-delay vs targeted-pause policy simulator and the fairness table.
 
-**What's new in the finale upgrade:** see [`docs/UPGRADE_NOTES.md`](docs/UPGRADE_NOTES.md) – Hindi warnings, "Talk to my bank", trusted-contact approval, kill switch, QR and loan-app scams, Suspect-Registry and 1930-complaint feeds, 1930 report export, rollout modes, B2 baseline, policy simulator, and one-case-per-gang linking fixes.
+ Hindi warnings, "Talk to my bank", trusted-contact approval, kill switch, QR and loan-app scams, Suspect-Registry and 1930-complaint feeds, 1930 report export, rollout modes, B2 baseline, policy simulator, and one-case-per-gang linking fixes.
 
 ## What is inside
 
