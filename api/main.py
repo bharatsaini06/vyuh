@@ -609,6 +609,103 @@ def ingest(events: List[EventIn]):
     return {"accepted": len(results), "results": results}
 
 
+# ---------------------------------------------------------------- test lab (judge's own input)
+SAMPLES_DIR = config.ROOT / "samples"
+
+
+class LabRunIn(BaseModel):
+    csv: str = Field(min_length=1, max_length=9_000_000)
+    filename: str = Field(default="upload.csv", max_length=120)
+    history_days: Optional[float] = Field(default=None, ge=0, le=60)   # None = automatic
+
+
+class LabPaymentIn(BaseModel):
+    payer: str = Field(min_length=1, max_length=64)
+    payee: str = Field(min_length=1, max_length=64)
+    amount: float = Field(gt=0, lt=1e9)
+    remark: str = Field(default="", max_length=60)
+    call_active: int = Field(default=0, ge=0, le=1)
+    screen_share: int = Field(default=0, ge=0, le=1)
+    remote_app: int = Field(default=0, ge=0, le=1)
+    paste_payee: int = Field(default=0, ge=0, le=1)
+    payee_fri: int = Field(default=0, ge=0, le=3)
+    payee_type: str = Field(default="individual", pattern="^(individual|business)$")
+    payee_age_days: float = Field(default=180, ge=0, le=36500)
+    trusted_contact: int = Field(default=0, ge=0, le=1)
+
+
+@app.get("/api/lab/template", tags=["test lab"])
+def lab_template(user: dict = Depends(ANY)):
+    from api.lab import template_csv
+    return Response(template_csv(), media_type="text/csv",
+                    headers={"Content-Disposition": 'attachment; filename="vyuh_test_template.csv"'})
+
+
+@app.get("/api/lab/samples", tags=["test lab"])
+def lab_samples(user: dict = Depends(ANY)):
+    if not SAMPLES_DIR.exists():
+        return []
+    out = []
+    for f in sorted(SAMPLES_DIR.glob("*.csv")):
+        first = f.open(encoding="utf-8").readline().lstrip("# ").strip()
+        out.append({"name": f.name, "about": first[:200]})
+    return out
+
+
+@app.get("/api/lab/samples/{name}", tags=["test lab"])
+def lab_sample(name: str, user: dict = Depends(ANY)):
+    f = (SAMPLES_DIR / name).resolve()
+    if f.parent != SAMPLES_DIR.resolve() or f.suffix != ".csv" or not f.exists():
+        raise HTTPException(404, "No such sample")
+    return Response(f.read_text(encoding="utf-8"), media_type="text/csv",
+                    headers={"Content-Disposition": f'attachment; filename="{f.name}"'})
+
+
+@app.post("/api/lab/run", tags=["test lab"])
+def lab_run(body: LabRunIn, user: dict = Depends(WORK)):
+    from api import lab
+    rt = runtime()
+    try:
+        res = lab.run_file(body.csv, rt.models, rt.playbooks, body.history_days)
+    except ValueError as exc:
+        raise HTTPException(400, str(exc))
+    m = res.get("metrics") or {}
+    store().audit(user["username"], user["role"], "lab_run", body.filename[:80],
+                  {"rows": res["summary"]["rows"], "flagged": res["summary"]["flagged"],
+                   "cases": len(res["cases"]), "labelled": m.get("labelled_payments", 0)})
+    return res
+
+
+class LabScenarioIn(BaseModel):
+    kind: str = Field(default="task_scam", pattern="^(task_scam|digital_arrest|investment|kyc_remote|genuine_new_payee)$")
+    victims: int = Field(default=6, ge=1, le=30)
+    steps: int = Field(default=4, ge=1, le=6)
+    first_amount: float = Field(default=2000, ge=100, le=5_000_000)
+    growth: float = Field(default=2.0, ge=1.0, le=5.0)
+    on_call: Optional[bool] = None
+    screen_share: Optional[bool] = None
+    new_account_each_payment: bool = False
+    hide_words: bool = False
+    senior_with_trusted_contact: bool = False
+
+
+@app.post("/api/lab/scenario", tags=["test lab"])
+def lab_scenario(body: LabScenarioIn, user: dict = Depends(WORK)):
+    from api import lab
+    rt = runtime()
+    res = lab.run_scenario(body.model_dump(), rt.models, rt.playbooks)
+    store().audit(user["username"], user["role"], "lab_scenario", body.kind,
+                  {"victims": body.victims, "flagged": res["summary"]["flagged"], "cases": len(res["cases"])})
+    return res
+
+
+@app.post("/api/lab/score", tags=["test lab"])
+def lab_score(body: LabPaymentIn, user: dict = Depends(WORK)):
+    from api import lab
+    rt = runtime()
+    return lab.score_payment(body.model_dump(), rt.models, rt.playbooks)
+
+
 # ---------------------------------------------------------------- web console
 if config.FRONTEND_DIR.exists():
     app.mount("/static", StaticFiles(directory=str(config.FRONTEND_DIR)), name="static")

@@ -102,3 +102,29 @@ def test_rollout_mode_and_password(client):
     assert client.post("/api/mode", json={"mode": "full"}, headers=sup).status_code == 200
     r = client.post("/api/auth/password", json={"current_password": "wrong", "new_password": "AnotherPass@2026"}, headers=inv)
     assert r.status_code == 403
+
+
+def test_test_lab_file_scenario_and_single_payment(client):
+    inv = login(client, "investigator", config.DEFAULT_PASSWORDS["investigator"])
+    aud = login(client, "auditor", config.DEFAULT_PASSWORDS["auditor"])
+    tpl = client.get("/api/lab/template", headers=aud)
+    assert tpl.status_code == 200 and "timestamp,payer,payee,amount" in tpl.text
+    # auditors may read but not run tests
+    assert client.post("/api/lab/run", json={"csv": tpl.text}, headers=aud).status_code == 403
+    r = client.post("/api/lab/run", json={"csv": tpl.text, "filename": "template.csv"}, headers=inv)
+    assert r.status_code == 200, r.text
+    res = r.json()
+    assert res["summary"]["payments"] == 4 and res["metrics"]["scam_payments"] == 2
+    assert res["privacy"]["example_stored"].startswith("acct_")
+    # bad files are rejected with a clear message
+    bad = client.post("/api/lab/run", json={"csv": "a,b\n1,2"}, headers=inv)
+    assert bad.status_code == 400 and "Missing column" in bad.json()["detail"]
+    sc = client.post("/api/lab/scenario", json={"kind": "task_scam", "victims": 4}, headers=inv)
+    assert sc.status_code == 200, sc.text
+    body = sc.json()
+    assert body["metrics"]["scam_payments"] == 16 and body["csv"].startswith("event_id")
+    one = client.post("/api/lab/score", json={"payer": "customer_01", "payee": "x", "amount": 9000,
+                                              "call_active": 1}, headers=inv)
+    assert one.status_code == 200 and one.json()["level"] in ("R0", "R1", "R2", "R2T", "R3")
+    # the live demo is untouched by the lab
+    assert client.get("/api/health").json()["runtime_ready"] is True

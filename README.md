@@ -22,6 +22,16 @@ uvicorn api.main:app --port 8000
 Open http://127.0.0.1:8000 and log in as `investigator` / `Investigator@123` (change in `.env`).
 API reference: http://127.0.0.1:8000/docs
 
+## Test Lab – run Vyuh on your own input (built at the finale)
+
+The **Test Lab** tab runs Vyuh on input that someone else chooses, in a fresh copy of the detector that is separate from the live demo:
+
+1. **Upload a file** – CSV, one row per payment. Required columns: `timestamp, payer, payee, amount`. Optional: `type, remark, on_call, screen_share, remote_app, pasted_payee, session_seconds, payee_fri, is_collect, payee_type, payee_account_age_days, payer_age_band, trusted_contact, label`. Common column names (`from`, `to`, `time`, `is_fraud` …) are understood. **Download template** shows the format.
+2. **Build an attack** – pick a scam, number of customers, amounts, call / screen-share, and attacker tricks (new account per payment, no tell-tale words). Vyuh writes 10 days of normal life for each customer, then the attack.
+3. **Score one payment** – a dry run for a single payment you type in.
+
+With a `label` column (scam / genuine) the lab reports catch rate, false positives, precision, the same numbers for the rules engine on the same payments, and **every missed scam and every wrongly flagged genuine payment, with the reason**. Ready-made files from the test month are in `samples/` (re-create with `python -m scripts.make_lab_samples`).
+
 ## Results
 
 Models trained on days 1–30, tested on days 31–60 (which contain a scam playbook the models never saw), against a rules engine (B0), per-payment ML (B1), per-payment ML + mule score (B2), and B1/B2 tuned to Vyuh's friction. `python -m scripts.prepare` writes the numbers from **your** run to [`docs/REFERENCE_RESULTS.md`](docs/REFERENCE_RESULTS.md); the web console shows them on the **Results** tab, including the RBI blanket-delay vs targeted-pause policy simulator and the fairness table.
@@ -37,7 +47,8 @@ Models trained on days 1–30, tested on days 31–60 (which contain a scam play
 | `graph/` | Slow path: campaign linking (shared collectors, shared forwarding, journey-shape similarity, Louvain/Leiden with connectivity and money-trail refinement, case merging) and emerging-playbook detection (HDBSCAN + burst test) |
 | `models/` | Training (LightGBM journey + collector models, isotonic calibration, campaign confidence, playbook library) and the model registry |
 | `cases/` | Campaign tracker, priority = saveable × confidence × growth, analyst-capacity board, feedback, SQLite store with hash-chained audit log |
-| `api/` | FastAPI backend: login + roles, live replay runtime, case APIs, bank integration APIs (`/api/v1/score`, `/api/v1/events`) |
+| `api/` | FastAPI backend: login + roles, live replay runtime, case APIs, bank integration APIs (`/api/v1/score`, `/api/v1/events`), Test Lab (`api/lab.py`) |
+| `samples/` | Ready-to-upload Test Lab files (synthetic test month, with labels) |
 | `frontend/` | Web console (plain HTML/CSS/JS, works offline) |
 | `eval/` | Evaluation against B0, B1 and B2 baselines, policy simulator (RBI 1-hour delay vs targeted pause), fairness, budget curve, adversarial run, drift (PSI) |
 | `tests/` | Unit tests, golden scam scenario, end-to-end API test |
