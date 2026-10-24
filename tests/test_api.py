@@ -85,6 +85,9 @@ def test_customer_screen_and_controls(client):
     names = {p["name"] for p in pbs}
     assert "qr_refund_scam" in names and "collect_request" not in names
     assert all(p["warning_hi"] for p in pbs)                       # every scam has a Hindi warning
+    # an earlier test may have left the featured victim's payment paused: answer it first
+    for choice in ("cancel", "decline"):
+        client.post("/api/phone/respond", json={"choice": choice}, headers=inv)
     assert client.post("/api/phone/respond", json={"choice": "talk"}, headers=inv).status_code == 409   # nothing waiting
     assert client.post("/api/phone/respond", json={"choice": "hack"}, headers=inv).status_code == 422
     client.post("/api/simulate/inject", json={"playbook": "digital_arrest", "victims": 6, "senior_first": True}, headers=inv)
