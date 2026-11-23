@@ -225,10 +225,10 @@ PS05 modules are a roadmap, not directories asserted to exist yet.
 
 ## 12. Team Drishti
 
-- Ayush Kumar
 - Bharat Saini
-- Bhupendra Sahu
-- Nishit Nagar
+- Amit Singh
+- Bhavishya Jhalani
+- Ayush Kumar
 
 ---
 
